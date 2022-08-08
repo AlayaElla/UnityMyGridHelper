@@ -100,6 +100,12 @@ public class LayeroutHelperBase : MonoBehaviour
 
     public virtual void SetGrid(){}
 
+    public void SetPadding(Padding _padding)
+    {
+        padding = _padding;
+        SetGrid();
+    }
+
     public Vector3 GetRectTransformLocalPosition(Vector3 pos,RectTransform rect)
     {
         return new Vector3(pos.x - rect.rect.width / 2, pos.y + rect.rect.height / 2, pos.z);

@@ -52,4 +52,10 @@ public class VerticalHelper : LayeroutHelperBase
             offsetHeight -= item.Value.rectTransform.rect.height + spacing;
         }
     }
+
+    public void SetSpacing(float _spacing)
+    {
+        spacing = _spacing;
+        SetGrid();
+    }
 }

@@ -16,7 +16,6 @@ public class GridHelper : LayeroutHelperBase
         float offsetHeight = 0 - padding.Top;
         float current_width = 0;
         Vector3 _pos = Vector3.zero;
-        RectTransform rectParent;
         foreach (var item in childList)
         {
             if (item.Value == null)
@@ -53,4 +52,12 @@ public class GridHelper : LayeroutHelperBase
                 item.Value.rectTransform.localPosition = GetRectTransformLocalPosition(_pos, rootRect);
         }
     }
+
+    public void SetSpacing(Vector2 _spacing)
+    {
+        spacing = _spacing;
+        SetGrid();
+    }
+
+
 }
