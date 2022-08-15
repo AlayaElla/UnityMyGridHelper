@@ -18,11 +18,11 @@ public class GridHelper : LayeroutHelperBase
         Vector3 _pos = Vector3.zero;
         foreach (var item in childList)
         {
-            if (item.Value == null)
-                childList.Remove(item.Key);
+            if (item == null)
+                childList.Remove(item);
 
             //如果超过容器长度则换行
-            current_width = offsetWidth + item.Value.rectTransform.rect.width + padding.Right;
+            current_width = offsetWidth + item.rectTransform.rect.width + padding.Right;
             if (current_width > rootRect.rect.width)
             {
                 offsetWidth = 0 + padding.Left;
@@ -31,25 +31,25 @@ public class GridHelper : LayeroutHelperBase
             if (childAligment == ChildAligment.Upper_Left)
             {
                 _pos = new Vector3(
-                    offsetWidth + item.Value.rectTransform.rect.width / 2,//x
+                    offsetWidth + item.rectTransform.rect.width / 2,//x
                     offsetHeight,//y
                     0
                     );
 
-                offsetWidth += item.Value.rectTransform.rect.width + spacing.x;
+                offsetWidth += item.rectTransform.rect.width + spacing.x;
             }
 
 #if UNITY_EDITOR
             if (!Application.isPlaying)
             {
-                item.Value.targetPos = GetRectTransformLocalPosition(_pos, rootRect);
-                item.Value.rectTransform.localPosition = GetRectTransformLocalPosition(_pos, rootRect);
+                item.targetPos = GetRectTransformLocalPosition(_pos, rootRect);
+                item.rectTransform.localPosition = GetRectTransformLocalPosition(_pos, rootRect);
             }
 #endif
             if (positionTween)
-                item.Value.targetPos = GetRectTransformLocalPosition(_pos, rootRect);
+                item.targetPos = GetRectTransformLocalPosition(_pos, rootRect);
             else
-                item.Value.rectTransform.localPosition = GetRectTransformLocalPosition(_pos, rootRect);
+                item.rectTransform.localPosition = GetRectTransformLocalPosition(_pos, rootRect);
         }
     }
 

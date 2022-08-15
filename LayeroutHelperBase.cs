@@ -15,10 +15,11 @@ public class LayeroutHelperBase : MonoBehaviour
     }
 
     public class LayerItem {
+        public int instanceID;
         public RectTransform rectTransform;
         public Vector3 targetPos;
     }
-    public Dictionary<int, LayerItem> childList = new Dictionary<int, LayerItem>();
+    public List<LayerItem> childList = new List<LayerItem>();
 
     public Padding padding = new Padding();
 
@@ -48,11 +49,11 @@ public class LayeroutHelperBase : MonoBehaviour
         {
             foreach (var item in childList)
             {
-                _pos = item.Value.rectTransform.localPosition;
-                _moveX = Mathf.Lerp(_pos.x, (float)item.Value.targetPos.x, Time.deltaTime * smooting);
-                _moveY = Mathf.Lerp(_pos.y, (float)item.Value.targetPos.y, Time.deltaTime * smooting);
+                _pos = item.rectTransform.localPosition;
+                _moveX = Mathf.Lerp(_pos.x, (float)item.targetPos.x, Time.deltaTime * smooting);
+                _moveY = Mathf.Lerp(_pos.y, (float)item.targetPos.y, Time.deltaTime * smooting);
                 _pos = new Vector3(_moveX, _moveY, _pos.z);
-                item.Value.rectTransform.localPosition = _pos;
+                item.rectTransform.localPosition = _pos;
             }
         }
     }
@@ -75,11 +76,11 @@ public class LayeroutHelperBase : MonoBehaviour
                 _list.Add(child.GetInstanceID());
             }
 
-            var _childList = new Dictionary<int, LayerItem>(childList);
+            var _childList = new List<LayerItem>(childList);
             foreach (var item in childList)
             {
-                if (!_list.Contains(item.Key))
-                    _childList.Remove(item.Key);
+                if (!_list.Contains(item.instanceID))
+                    _childList.Remove(item);
             }
             childList = _childList;
         }
@@ -87,15 +88,26 @@ public class LayeroutHelperBase : MonoBehaviour
         {
             foreach (RectTransform child in transform)
             {
-                if (!childList.ContainsKey(child.GetInstanceID()))
+                if (!CheckIsChildInList(child))
                 {
                     LayerItem item = new LayerItem();
+                    item.instanceID = child.GetInstanceID();
                     item.rectTransform = child;
-                    childList.Add(child.GetInstanceID(), item);
+                    childList.Add(item);
                 }
 
             }
         }
+    }
+
+    bool CheckIsChildInList(RectTransform child)
+    {
+        foreach (var item in childList)
+        {
+            if (item.rectTransform == child)
+                return true;
+        }
+        return false;
     }
 
     public virtual void SetGrid(){}

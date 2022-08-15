@@ -20,14 +20,14 @@ public class VerticalHelper : LayeroutHelperBase
 
         foreach (var item in childList)
         {
-            if (item.Value == null)
-                childList.Remove(item.Key);
+            if (item == null)
+                childList.Remove(item);
 
             if (childAligment == ChildAligment.UpperLeft)
             {
                 _pos = new Vector3(
                     offsetWidth,//x
-                    offsetHeight - item.Value.rectTransform.rect.height / 2,//y
+                    offsetHeight - item.rectTransform.rect.height / 2,//y
                     0
                     );
             }
@@ -35,21 +35,21 @@ public class VerticalHelper : LayeroutHelperBase
             {
                 _pos = new Vector3(
                     offsetWidth + rootRect.rect.width / 2,//x
-                    offsetHeight - item.Value.rectTransform.rect.height / 2,//y
+                    offsetHeight - item.rectTransform.rect.height / 2,//y
                     0
                     );
             }
 #if UNITY_EDITOR
             if (!Application.isPlaying) {
-                item.Value.targetPos = GetRectTransformLocalPosition(_pos, rootRect);
-                item.Value.rectTransform.localPosition = GetRectTransformLocalPosition(_pos, rootRect);
+                item.targetPos = GetRectTransformLocalPosition(_pos, rootRect);
+                item.rectTransform.localPosition = GetRectTransformLocalPosition(_pos, rootRect);
             }
 #endif
             if (positionTween)
-                item.Value.targetPos = GetRectTransformLocalPosition(_pos, rootRect);
+                item.targetPos = GetRectTransformLocalPosition(_pos, rootRect);
             else
-                item.Value.rectTransform.localPosition = GetRectTransformLocalPosition(_pos, rootRect);
-            offsetHeight -= item.Value.rectTransform.rect.height + spacing;
+                item.rectTransform.localPosition = GetRectTransformLocalPosition(_pos, rootRect);
+            offsetHeight -= item.rectTransform.rect.height + spacing;
         }
     }
 
