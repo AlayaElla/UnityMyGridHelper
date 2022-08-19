@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 [ExecuteInEditMode]
-public class LayeroutHelperBase : MonoBehaviour
+public class LayeroutHelperUIBase : MonoBehaviour
 {
     [System.Serializable]
     public class Padding {
@@ -16,7 +16,7 @@ public class LayeroutHelperBase : MonoBehaviour
 
     public class LayerItem {
         public int instanceID;
-        public Transform transform;
+        public RectTransform rectTransform;
         public Vector3 targetPos;
     }
     public List<LayerItem> childList = new List<LayerItem>();
@@ -24,7 +24,7 @@ public class LayeroutHelperBase : MonoBehaviour
     public Padding padding = new Padding();
 
     [HideInInspector]
-    public Transform root;
+    public RectTransform rootRect;
 
     public bool positionTween = false;
     public float smooting = 8;
@@ -32,12 +32,12 @@ public class LayeroutHelperBase : MonoBehaviour
     // Start is called before the first frame update
     protected virtual void Start()
     {
-        root = transform.GetComponent<Transform>();
+        rootRect = transform.GetComponent<RectTransform>();
     }
 
     private Vector3 _pos;
     private float _moveX;
-    private float _moveZ;
+    private float _moveY;
     // Update is called once per frame
     protected virtual void Update()
     {
@@ -49,17 +49,17 @@ public class LayeroutHelperBase : MonoBehaviour
         {
             foreach (var item in childList)
             {
-                _pos = item.transform.localPosition;
+                _pos = item.rectTransform.localPosition;
                 _moveX = Mathf.Lerp(_pos.x, (float)item.targetPos.x, Time.deltaTime * smooting);
-                _moveZ = Mathf.Lerp(_pos.z, (float)item.targetPos.z, Time.deltaTime * smooting);
-                _pos = new Vector3(_moveX, _pos.y, _moveZ);
-                item.transform.localPosition = _pos;
+                _moveY = Mathf.Lerp(_pos.y, (float)item.targetPos.y, Time.deltaTime * smooting);
+                _pos = new Vector3(_moveX, _moveY, _pos.z);
+                item.rectTransform.localPosition = _pos;
             }
         }
     }
 
     void UpdateGrid() {
-        if (root == null)
+        if (rootRect == null)
             return;
 
         UpdateChildList();
@@ -86,13 +86,13 @@ public class LayeroutHelperBase : MonoBehaviour
         }
         else if(transform.childCount > childList.Count)
         {
-            foreach (Transform child in transform)
+            foreach (RectTransform child in transform)
             {
                 if (!CheckIsChildInList(child))
                 {
                     LayerItem item = new LayerItem();
                     item.instanceID = child.GetInstanceID();
-                    item.transform = child;
+                    item.rectTransform = child;
                     childList.Add(item);
                 }
 
@@ -100,11 +100,11 @@ public class LayeroutHelperBase : MonoBehaviour
         }
     }
 
-    bool CheckIsChildInList(Transform child)
+    bool CheckIsChildInList(RectTransform child)
     {
         foreach (var item in childList)
         {
-            if (item.transform == child)
+            if (item.rectTransform == child)
                 return true;
         }
         return false;
@@ -118,9 +118,14 @@ public class LayeroutHelperBase : MonoBehaviour
         SetGrid();
     }
 
+    public Vector3 GetRectTransformLocalPosition(Vector3 pos,RectTransform rect)
+    {
+        return new Vector3(pos.x - rect.rect.width / 2, pos.y + rect.rect.height / 2, pos.z);
+    }
+
     public void OnEnable()
     {
-        root = transform.GetComponent<Transform>();
+        rootRect = transform.GetComponent<RectTransform>();
     }
 
     public void OnTransformChildrenChanged()

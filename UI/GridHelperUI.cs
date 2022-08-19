@@ -2,15 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GridHelper : LayeroutHelperBase
+public class GridHelperUI : LayeroutHelperUIBase
 {
     public enum ChildAligment
     {
         Upper_Left
     }
     public ChildAligment childAligment = ChildAligment.Upper_Left;
-    public Vector2 Area = new Vector2(100,100);
-    public Vector2 spacing = new Vector2(10,10);
+    public Vector2 spacing = new Vector2();
     public override void SetGrid()
     {
         float offsetWidth = 0 + padding.Left;
@@ -23,8 +22,8 @@ public class GridHelper : LayeroutHelperBase
                 childList.Remove(item);
 
             //如果超过容器长度则换行
-            current_width = offsetWidth + padding.Right;
-            if (current_width > Area.x)
+            current_width = offsetWidth + item.rectTransform.rect.width + padding.Right;
+            if (current_width > rootRect.rect.width)
             {
                 offsetWidth = 0 + padding.Left;
                 offsetHeight -= spacing.y;
@@ -32,25 +31,25 @@ public class GridHelper : LayeroutHelperBase
             if (childAligment == ChildAligment.Upper_Left)
             {
                 _pos = new Vector3(
-                    offsetWidth,//x
-                    0,//y
-                    offsetHeight //z
+                    offsetWidth + item.rectTransform.rect.width / 2,//x
+                    offsetHeight,//y
+                    0
                     );
 
-                offsetWidth += spacing.x;
+                offsetWidth += item.rectTransform.rect.width + spacing.x;
             }
 
 #if UNITY_EDITOR
             if (!Application.isPlaying)
             {
-                item.targetPos = _pos;
-                item.transform.localPosition = _pos;
+                item.targetPos = GetRectTransformLocalPosition(_pos, rootRect);
+                item.rectTransform.localPosition = GetRectTransformLocalPosition(_pos, rootRect);
             }
 #endif
             if (positionTween)
-                item.targetPos = _pos;
+                item.targetPos = GetRectTransformLocalPosition(_pos, rootRect);
             else
-                item.transform.localPosition = _pos;
+                item.rectTransform.localPosition = GetRectTransformLocalPosition(_pos, rootRect);
         }
     }
 
