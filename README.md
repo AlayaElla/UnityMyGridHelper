@@ -24,6 +24,4 @@ unity中自带的Grid Layout Group是按照子物体的顺序来进行排序，�
 
 ![image](https://cdn.alaya.cool/wp-content/uploads/2022/08/1660912628-Honeycam-2022-08-19-19-53-10.gif)
 
-![image](https://cdn.alaya.cool/wp-content/uploads/2022/08/1660912649-Honeycam-2022-08-19-19-55-48.gif)
-
 ![image](https://user-images.githubusercontent.com/21375302/185624547-9ad35991-8d0f-4c5e-81ee-7e64bae13e46.png)
