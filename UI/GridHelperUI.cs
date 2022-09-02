@@ -70,7 +70,7 @@ public class GridHelperUI : LayeroutHelperUIBase
 
     float CalRowWidth(int startIndex)
     {
-        float width = 0;
+        float width =0;
         for (int i = startIndex; i < childList.Count; i++)
         {
             if (width + spacing.x + childList[i].rectTransform.rect.width >= rootRect.rect.width)
