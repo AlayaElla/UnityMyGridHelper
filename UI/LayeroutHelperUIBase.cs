@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 [ExecuteInEditMode]
 public class LayeroutHelperUIBase : MonoBehaviour
@@ -58,7 +59,7 @@ public class LayeroutHelperUIBase : MonoBehaviour
         }
     }
 
-    void UpdateGrid() {
+    public void UpdateGrid() {
         if (rootRect == null)
             return;
 
@@ -76,38 +77,26 @@ public class LayeroutHelperUIBase : MonoBehaviour
                 _list.Add(child.GetInstanceID());
             }
 
-            var _childList = new List<LayerItem>(childList);
-            foreach (var item in childList)
-            {
-                if (!_list.Contains(item.instanceID))
-                    _childList.Remove(item);
-            }
-            childList = _childList;
+            childList.RemoveAll(item => !_list.Contains(item.instanceID));
         }
-        else if(transform.childCount > childList.Count)
+        else if (transform.childCount > childList.Count)
         {
+            childList.Clear();
             foreach (RectTransform child in transform)
             {
-                if (!CheckIsChildInList(child))
-                {
-                    LayerItem item = new LayerItem();
-                    item.instanceID = child.GetInstanceID();
-                    item.rectTransform = child;
-                    childList.Add(item);
-                }
-
+                LayerItem item = new LayerItem();
+                item.instanceID = child.GetInstanceID();
+                item.rectTransform = child;
+                childList.Add(item);
             }
         }
+
+        childList = childList.OrderBy(item => GetSiblingIndex(item.rectTransform)).ToList();
     }
 
-    bool CheckIsChildInList(RectTransform child)
+    int GetSiblingIndex(RectTransform rectTransform)
     {
-        foreach (var item in childList)
-        {
-            if (item.rectTransform == child)
-                return true;
-        }
-        return false;
+        return rectTransform.GetSiblingIndex();
     }
 
     public virtual void SetGrid(){}
@@ -121,6 +110,22 @@ public class LayeroutHelperUIBase : MonoBehaviour
     public Vector3 GetRectTransformLocalPosition(Vector3 pos,RectTransform rect)
     {
         return new Vector3(pos.x - rect.rect.width / 2, pos.y + rect.rect.height / 2, pos.z);
+    }
+
+    public Vector3 GetTargetPosByInstanceID(int instanceID)
+    {
+        LayerItem lastItem = null;
+        foreach (var item in childList)
+        {
+            lastItem = item;
+            if (item.instanceID == instanceID)
+                return item.targetPos;
+        }
+        if (lastItem != null)
+        {
+            return lastItem.targetPos;
+        }
+        return Vector3.zero;
     }
 
     public void OnEnable()
